@@ -17,31 +17,46 @@ const ll N =2e5;
 vector<array<ll, 3>>g[N];
 vector<ll>dist(N,LLONG_MAX);
 ll n,m;
+ll dijkstra(ll p, ll q)
+{
+    priority_queue<pair<ll,ll>,vector<pair<ll,ll>>,greater<pair<ll,ll>>>pq;
+    pq.push({0,p});
+    while(pq.size())
+    {
+        auto t=pq.top();
+        pq.pop();
+        ll v=t.second;
+        if (t.first >= dist[v]){continue;}
+        dist[v]=t.first;
+        for(auto [u,x,tm]:g[v])
+        {
+            ll temp=((dist[v]+x-1)/x)*x+tm;
+            if(temp>dist[u]){continue;}
+            pq.push({temp,u});
+        }
+    }
+    if(dist[q]==LLONG_MAX){return -1;}
+    return dist[q];
+}
 int32_t main()
 {
 
     fast
-    ll i,j,k,p,q,tc=1,cs=0;cin>>tc;
+    ll i,j,k,p,q,tc=1,cs=0;//cin>>tc;
     while(tc--)
     {
-        cin>>n>>m;
-        cout<<"Case "<<++cs<<": "<<endl;
-        vector<ll>v(n);
-        for(auto &it:v){cin>>it;}
+        cin>>n>>m>>p>>q;
         while(m--)
         {
-            ll x,y,z=0;
-            cin>>x>>y;
-            for(i=x-1;i<y;i++)
-            {
-                z^=v[i];
-            }
-            cout<<z<<endl;
-
+            ll x,y,z,w;
+            cin>>x>>y>>w>>z;
+            g[x].pb({y, z, w});
+            g[y].pb({x, z, w});
         }
-
+        cout<<dijkstra(p,q)<<endl;
     }
 }
+
 //https://atcoder.jp/contests/abc192/tasks/abc192_e
 /**
 Instead of making three element pair, create a array of three element -Nynayem.
